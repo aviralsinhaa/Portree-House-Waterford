@@ -1,183 +1,109 @@
-export interface ResortMedia {
-  url: string;
-  alt: string;
-  caption?: string;
-  photographer?: string;
-}
-
-export interface Villa {
+export interface GuestRoom {
   id: string;
   number: string;
   name: string;
+  type: string;
   subtitle: string;
-  category: 'overwater' | 'beach' | 'residence';
-  size: string;
-  guests: string;
-  bedrooms: string;
-  pricePerNight: number;
+  capacity: string;
+  bedSetup: string;
+  bathroom: string;
   featuredImage: string;
   gallery: string[];
-  panoramaSceneId?: string;
-  tagline: string;
   description: string;
   highlights: string[];
   amenities: string[];
-  orientation: string;
-  architecturalDetails: string[];
-}
-
-export interface DiningVenue {
-  id: string;
-  name: string;
-  tagline: string;
-  cuisine: string;
-  setting: string;
-  hours: string;
-  image: string;
-  description: string;
-  signatureDish: string;
-  chefQuote: string;
-  dressCode: string;
-  menuHighlights?: string[];
-}
-
-export interface Experience {
-  id: string;
-  title: string;
-  category: 'ocean' | 'private' | 'wellness' | 'culinary';
-  duration: string;
-  privacy: 'Private' | 'Intimate Shared' | 'Bespoke';
-  image: string;
-  description: string;
-  timing: string;
-  bestTimeOfDay: 'morning' | 'afternoon' | 'sunset' | 'evening';
+  view: string;
+  rateNote: string;
 }
 
 export interface DayMoment {
   time: string;
   title: string;
   subtitle: string;
-  quote: string;
+  description: string;
   image: string;
-  atmosphere: 'dawn' | 'morning' | 'noon' | 'afternoon' | 'sunset' | 'dusk' | 'night';
-  details: string;
 }
 
-export interface IslandHotspot {
+export interface LocalAttraction {
   id: string;
   title: string;
   category: string;
-  x: number; // percentage on map (0 - 100)
-  y: number; // percentage on map (0 - 100)
+  distance: string;
   description: string;
   image: string;
-  actionText: string;
-  targetSection?: string;
-  panoramaSceneId?: string;
+  highlights: string[];
 }
 
-export interface PanoramaScene {
+export interface GalleryItem {
   id: string;
   title: string;
-  locationName: string;
+  category: 'property' | 'local-area' | 'house' | 'rooms' | 'grounds' | 'area';
   image: string;
-  description: string;
-  hotspots: {
-    id: string;
-    label: string;
-    phi: number; // polar angle
-    theta: number; // azimuthal angle
-    description: string;
-  }[];
+  caption: string;
+  sourceNote: string;
+  aspectRatio: 'landscape' | 'portrait' | 'square';
 }
 
-export interface Offer {
-  id: string;
-  badge: string;
-  title: string;
-  subtitle: string;
-  duration: string;
-  inclusions: string[];
-  image: string;
-  idealFor: string;
+export interface PracticalFAQ {
+  question: string;
+  answer: string;
+  category: 'arrival' | 'rooms' | 'dining' | 'policies';
 }
 
-export interface ResortConfig {
-  slug: string;
-  brandName: string;
-  shortName: string;
+export interface MambegConfig {
+  name: string;
+  subname: string;
   tagline: string;
-  editorialSubhead: string;
-  location: string;
-  atoll: string;
+  area: string;
+  region: string;
   country: string;
-  coordinates: {
-    lat: string;
-    lng: string;
-    display: string;
-  };
-  contact: {
-    email: string;
-    phone: string;
-    conciergeEmail: string;
-    address: string;
-  };
-  currency: {
-    code: string;
-    symbol: string;
-  };
+  postcode: string;
+  address: string;
+  phone: string;
+  email: string;
+  host: string;
+  checkIn: string;
+  checkOut: string;
+  parking: string;
+  wifi: string;
+  roomsCount: number;
   hero: {
-    backgroundImage: string;
-    badge: string;
     title: string;
     headline: string;
     subheadline: string;
+    image: string;
     primaryCta: string;
     secondaryCta: string;
   };
-  islandIntro: {
+  story: {
     headline: string;
-    editorialQuote: string;
-    narrative: string[];
-    stats: { label: string; value: string }[];
-    aerialImage: string;
-    detailImage: string;
+    subheading: string;
+    paragraphs: string[];
+    features: { title: string; desc: string }[];
   };
-  villas: Villa[];
-  dining: DiningVenue[];
-  experiences: Experience[];
-  dayTimeline: DayMoment[];
-  islandHotspots: IslandHotspot[];
-  panoramaScenes: PanoramaScene[];
-  offers: Offer[];
-  wellness: {
+  rooms: GuestRoom[];
+  highlights: { title: string; subtitle: string; desc: string; icon: string }[];
+  breakfast: {
     headline: string;
-    subheadline: string;
+    subtitle: string;
     description: string;
-    rituals: { id: string; title: string; duration: string; focus: string; description: string }[];
-    images: string[];
+    details: string[];
+    loungeAmenities: string[];
   };
-  destination: {
-    title: string;
+  grounds: {
+    headline: string;
+    subtitle: string;
+    description: string;
+  };
+  dayPace: DayMoment[];
+  attractions: LocalAttraction[];
+  gallery: GalleryItem[];
+  faqs: PracticalFAQ[];
+  sentiment: {
+    source: string;
+    rating: string;
+    rank: string;
     summary: string;
-    transferDetails: {
-      type: string;
-      duration: string;
-      description: string;
-    }[];
-    coordinatesNote: string;
+    highlights: string[];
   };
-  gallery: {
-    id: string;
-    title: string;
-    category: 'island' | 'villas' | 'ocean' | 'dining' | 'wellness';
-    image: string;
-    aspectRatio: 'portrait' | 'landscape' | 'square';
-  }[];
-  reviews: {
-    quote: string;
-    guest: string;
-    origin: string;
-    villaStayed: string;
-  }[];
 }

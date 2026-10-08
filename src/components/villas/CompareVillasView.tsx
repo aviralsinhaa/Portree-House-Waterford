@@ -1,23 +1,22 @@
 import { useEffect, useRef } from 'react';
-import { Villa } from '../../types';
-import { ArrowLeft, Check, Sparkles, X } from 'lucide-react';
+import { GuestRoom } from '../../types';
+import { ArrowLeft, Check, X } from 'lucide-react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { ResponsiveImage } from '../ui/ResponsiveImage';
 
 interface CompareVillasViewProps {
-  villas: Villa[];
+  villas: GuestRoom[];
   onClose: () => void;
-  onSelectVilla: (villaId: string) => void;
-  onRequestStay: (villaId: string) => void;
+  onSelectVilla: (roomId: string) => void;
+  onRequestStay: (roomId: string) => void;
   onAskConcierge: (prompt: string) => void;
 }
 
 export function CompareVillasView({
-  villas,
+  villas: rooms,
   onClose,
-  onSelectVilla,
+  onSelectVilla: onSelectRoom,
   onRequestStay,
-  onAskConcierge,
 }: CompareVillasViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useFocusTrap(containerRef, true, { autoFocusFirst: true });
@@ -42,168 +41,124 @@ export function CompareVillasView({
       ref={containerRef}
       role="dialog"
       aria-modal="true"
-      aria-label="Compare Villas"
-      className="fixed inset-0 z-50 overflow-y-auto bg-[#04080f] text-[#ece6dc] animate-fade-in"
+      aria-label="Compare Rooms"
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#faf8f4] text-[#191c1a] animate-fade-in"
     >
-      {/* Fixed Header */}
-      <header className="sticky top-0 z-40 w-full bg-[#04080f]/90 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3 sm:gap-6">
-          <button
-            onClick={onClose}
-            data-cursor="BACK"
-            data-focus-id="compare-back"
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-[#dfcaa3] hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Back to Island</span>
-          </button>
-          <span className="text-white/20">/</span>
-          <span className="font-editorial text-lg sm:text-xl text-white tracking-wide">
-            Compare Villas
-          </span>
-        </div>
-
+      <header className="sticky top-0 z-40 w-full bg-[#faf8f4]/95 backdrop-blur-md border-b border-[#191c1a]/10 px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => onAskConcierge('Which villa is best for our stay?')}
-            data-cursor="CONCIERGE"
-            data-focus-id="compare-concierge"
-            className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#c4a97d]/40 text-[#dfcaa3] hover:bg-[#dfcaa3]/10 text-[11px] uppercase tracking-[0.2em] font-sans transition-colors"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Ask Concierge</span>
-          </button>
-
-          <button
             onClick={onClose}
-            data-focus-id="compare-close"
-            className="p-2 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
-            aria-label="Close comparison view"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#1e3325] hover:underline"
           >
-            <X className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Property</span>
           </button>
+          <span className="text-[#ded8cb]">/</span>
+          <span className="font-editorial text-lg text-[#1e3325] font-semibold">
+            Compare Accommodations
+          </span>
         </div>
+
+        <button
+          onClick={onClose}
+          className="p-1.5 rounded-md hover:bg-[#ded8cb]/40 text-[#191c1a] transition-colors"
+          aria-label="Close"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </header>
 
-      {/* Main Content */}
-      <div className="editorial-container py-8 sm:py-14 space-y-10 sm:space-y-14">
-        {/* Intro */}
-        <div className="border-b border-white/10 pb-6 text-left space-y-2">
-          <span className="text-[10px] uppercase tracking-[0.32em] text-[#dfcaa3] font-sans font-medium block">
-            ARCHITECTURAL COMPARISON
+      <main className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-12 space-y-8">
+        <div>
+          <span className="text-xs uppercase tracking-widest text-[#5c7562] font-semibold">
+            SIDE-BY-SIDE OVERVIEW
           </span>
-          <h1 className="font-editorial text-3xl sm:text-5xl text-white font-light">
-            Finding Your Island Sanctuary
+          <h1 className="font-editorial text-3xl sm:text-4xl text-[#1e3325] font-semibold mt-1">
+            Compare Guest Rooms
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-white/70 max-w-2xl font-light">
-            Each villa at Velora has been positioned intentionally: from sunset overwater infinity pools to secluded barefoot beachfront compounds and our solitary island-tip estate.
+          <p className="text-sm text-[#626c65] mt-2 max-w-2xl leading-relaxed">
+            Review features, capacity, bed configurations, and en-suite details across all four guest room options at Mambeg Country Guest House.
           </p>
         </div>
 
-        {/* Comparison Table / Cards Matrix */}
-        <div className="overflow-x-auto pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
-          <div className="min-w-[840px] grid grid-cols-4 gap-6">
-            {villas.map((v) => (
+        <div className="overflow-x-auto pb-6">
+          <div className="grid grid-cols-4 gap-4 min-w-[800px]">
+            {rooms.map((room) => (
               <div
-                key={v.id}
-                className="rounded-2xl bg-[#06101c] border border-white/10 p-6 flex flex-col justify-between space-y-6 text-left shadow-xl"
+                key={room.id}
+                className="bg-[#f5f2eb] rounded-xl border border-[#191c1a]/8 p-5 flex flex-col justify-between space-y-4"
               >
-                {/* Header Card Info */}
-                <div className="space-y-4">
-                  <div className="relative aspect-[16/10] rounded-xl overflow-hidden border border-white/10 bg-[#04080f]">
+                <div>
+                  <div className="aspect-[16/10] rounded-lg overflow-hidden bg-[#ded8cb] mb-3">
                     <ResponsiveImage
-                      src={v.featuredImage}
-                      alt={v.name}
-                      loading="lazy"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      className="w-full h-full object-cover velora-image-grade"
+                      src={room.featuredImage}
+                      alt={room.name}
+                      className="w-full h-full object-cover"
                     />
                   </div>
+                  <span className="text-[10px] uppercase tracking-wider text-[#5c7562] font-semibold block">
+                    {room.type}
+                  </span>
+                  <h3 className="font-editorial text-lg text-[#1e3325] font-semibold mt-0.5">
+                    {room.name}
+                  </h3>
+                </div>
 
+                <div className="space-y-3 text-xs text-[#282d2a] border-t border-[#191c1a]/8 pt-3">
                   <div>
-                    <span className="text-[9px] uppercase tracking-[0.24em] text-[#dfcaa3] font-sans block">
-                      {v.subtitle}
-                    </span>
-                    <h2 className="font-editorial text-2xl text-white font-normal mt-0.5">
-                      {v.name}
-                    </h2>
-                    <span className="font-mono text-lg text-[#dfcaa3] block mt-1">
-                      ${v.pricePerNight.toLocaleString()}<span className="text-xs text-white/40 font-sans"> / night</span>
-                    </span>
+                    <span className="text-[#626c65] block">Capacity:</span>
+                    <span className="font-medium">{room.capacity}</span>
                   </div>
-
-                  {/* Actions */}
-                  <div className="space-y-2 pt-2">
-                    <button
-                      onClick={() => onRequestStay(v.id)}
-                      data-focus-id={`compare-request-${v.id}`}
-                      className="w-full py-2.5 rounded-full bg-[#dfcaa3] hover:bg-[#f0e2c8] text-[#04080f] text-xs uppercase tracking-[0.2em] font-sans font-medium transition-colors text-center block"
-                    >
-                      REQUEST THIS VILLA
-                    </button>
-                    <button
-                      onClick={() => onSelectVilla(v.id)}
-                      data-focus-id={`compare-view-${v.id}`}
-                      className="w-full py-2 text-center text-xs uppercase tracking-[0.2em] text-white/70 hover:text-white transition-colors block border border-white/10 rounded-full"
-                    >
-                      View Details →
-                    </button>
+                  <div>
+                    <span className="text-[#626c65] block">Bed Setup:</span>
+                    <span className="font-medium">{room.bedSetup}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#626c65] block">Bathroom:</span>
+                    <span className="font-medium">{room.bathroom}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#626c65] block">Outlook:</span>
+                    <span className="font-medium">{room.view}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#626c65] block mb-1">Amenities:</span>
+                    <ul className="space-y-1 text-[11px] text-[#3c443f]">
+                      <li className="flex items-center gap-1.5">
+                        <Check className="w-3 h-3 text-[#3d5642]" /> Silent In-Room Fridge
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <Check className="w-3 h-3 text-[#3d5642]" /> Tea & Coffee Tray
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <Check className="w-3 h-3 text-[#3d5642]" /> TV & DVD Player
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <Check className="w-3 h-3 text-[#3d5642]" /> Free High-Speed Wi-Fi
+                      </li>
+                    </ul>
                   </div>
                 </div>
 
-                {/* Attributes Comparison */}
-                <div className="space-y-4 border-t border-white/10 pt-4 text-xs font-sans">
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/40 block">SETTING</span>
-                    <span className="text-white capitalize">{v.category} Living</span>
-                  </div>
-
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/40 block">LIVING AREA</span>
-                    <span className="font-editorial text-base text-white">{v.size}</span>
-                  </div>
-
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/40 block">CAPACITY</span>
-                    <span className="text-white">{v.guests} ({v.bedrooms})</span>
-                  </div>
-
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/40 block">ORIENTATION</span>
-                    <span className="text-white/80">{v.orientation}</span>
-                  </div>
-
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-white/40 block">POOL & WATER ACCESS</span>
-                    <span className="text-white/80">
-                      {v.id === 'sunset-pool-villa'
-                        ? '16m Infinity Pool · Submerged Reef Ladder'
-                        : v.id === 'ocean-lagoon-villa'
-                        ? 'Plunge Pool · Direct Lagoon Reef Stairs'
-                        : v.id === 'beach-reserve-residence'
-                        ? 'Plunge Pool · 50m Barefoot Private Beach'
-                        : 'Dual 25m Pools · Private Boat Mooring'}
-                    </span>
-                  </div>
-
-                  <div className="pt-2 border-t border-white/10">
-                    <span className="text-[9px] uppercase tracking-wider text-[#dfcaa3] block font-medium">BEST FOR</span>
-                    <p className="text-[11px] text-white/75 font-light leading-relaxed mt-1">
-                      {v.id === 'sunset-pool-villa'
-                        ? 'Couples seeking iconic open-ocean sunset views & infinity pool seclusion.'
-                        : v.id === 'ocean-lagoon-villa'
-                        ? 'Morning sunrise lovers & marine enthusiasts exploring the inner reef.'
-                        : v.id === 'beach-reserve-residence'
-                        ? 'Families & guests who prefer barefoot white powder sand & palm shade.'
-                        : 'Private delegations & families demanding island-tip compound exclusivity.'}
-                    </p>
-                  </div>
+                <div className="pt-2 space-y-2 border-t border-[#191c1a]/8">
+                  <button
+                    onClick={() => onRequestStay(room.id)}
+                    className="w-full py-2 px-3 rounded-md bg-[#1e3325] hover:bg-[#2a4734] text-[#faf8f4] text-xs font-medium transition-colors text-center"
+                  >
+                    Enquire Now
+                  </button>
+                  <button
+                    onClick={() => onSelectRoom(room.id)}
+                    className="w-full py-1.5 px-3 rounded-md border border-[#191c1a]/15 hover:bg-[#faf8f4] text-[#1e3325] text-xs font-medium transition-colors text-center"
+                  >
+                    View Details
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

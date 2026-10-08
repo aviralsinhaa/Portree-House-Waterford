@@ -19,14 +19,14 @@ async function startServer() {
   });
 
   app.get('/api/health', (_req, res) => {
-    res.status(200).json({ status: 'ok', resort: 'VELORA', timestamp: new Date().toISOString() });
+    res.status(200).json({ status: 'ok', property: 'Mambeg Country Guest House', timestamp: new Date().toISOString() });
   });
 
-  // Local Concierge API endpoint (zero remote LLM dependency)
+  // Local Stay Assistant API endpoint
   app.post('/api/concierge', (req, res) => {
     return res.status(200).json({
       status: 'ok',
-      message: 'Velora Concierge runs completely client-side in the browser atelier.',
+      message: 'Mambeg Stay Assistant runs completely client-side in the browser.',
     });
   });
 
@@ -50,7 +50,7 @@ async function startServer() {
   }
 
   app.listen(Number(port), '0.0.0.0', () => {
-    console.log(`VELORA Island server listening on 0.0.0.0:${port}`);
+    console.log(`Mambeg Country Guest House server listening on 0.0.0.0:${port}`);
   });
 }
 

@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { veloraResort } from '../../data/resortConfig';
-import { AmbienceControl } from '../ui/AmbienceControl';
-import { Sparkles, Menu } from 'lucide-react';
+import { Menu, MessageSquare } from 'lucide-react';
+import gsap from 'gsap';
 
 interface NavbarProps {
   onOpenBooking: () => void;
-  onOpenConcierge: (prompt?: string) => void;
+  onOpenStayAssistant: (prompt?: string) => void;
   onOpenMegaMenu: () => void;
 }
 
-export function Navbar({ onOpenBooking, onOpenConcierge, onOpenMegaMenu }: NavbarProps) {
+export function Navbar({ onOpenBooking, onOpenStayAssistant, onOpenMegaMenu }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const scrolledRef = useRef(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,16 +22,25 @@ export function Navbar({ onOpenBooking, onOpenConcierge, onOpenMegaMenu }: Navba
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Initial Navbar entrance animation
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!mediaQuery.matches && headerRef.current) {
+      gsap.fromTo(
+        headerRef.current,
+        { y: -30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.0, ease: 'power3.out', delay: 0.25 }
+      );
+    }
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
-    { label: 'THE ISLAND', href: '#island' },
-    { label: 'VILLAS', href: '#stay' },
-    { label: 'ISLAND LIFE', href: '#island-life' },
-    { label: 'A DAY AT VELORA', href: '#day' },
-    { label: 'DISCOVER', href: '#discover' },
-    { label: 'GETTING HERE', href: '#getting-here' },
+    { label: 'Stay', href: '#stay' },
+    { label: 'The House', href: '#the-house' },
+    { label: 'Breakfast', href: '#breakfast' },
+    { label: 'Explore', href: '#explore' },
   ];
 
   const handleNavClick = (href: string) => {
@@ -43,30 +52,38 @@ export function Navbar({ onOpenBooking, onOpenConcierge, onOpenMegaMenu }: Navba
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,padding] duration-500 pt-[env(safe-area-inset-top)] ${
+      ref={headerRef}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 pt-[env(safe-area-inset-top)] ${
         isScrolled
-          ? 'bg-[#04080f]/96 border-b border-white/[0.08] py-3.5 sm:py-4 shadow-lg'
-          : 'bg-gradient-to-b from-[#04080f]/90 via-[#04080f]/40 to-transparent py-4 sm:py-6'
+          ? 'bg-[#faf8f4]/96 backdrop-blur-md border-b border-[#191c1a]/10 py-3 sm:py-3.5 shadow-2xs text-[#191c1a]'
+          : 'bg-gradient-to-b from-[#16261b]/85 via-[#16261b]/40 to-transparent py-4 sm:py-5 text-[#faf8f4]'
       }`}
     >
-      <div className="w-full max-w-[1680px] mx-auto px-4 sm:px-8 md:px-12 flex items-center justify-between">
+      <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-8 md:px-10 flex items-center justify-between">
         {/* Brand Wordmark */}
         <a
           href="#"
-          className="group flex items-center gap-2 sm:gap-2.5 focus:outline-none shrink-0"
-          aria-label="VELORA Private Island Home"
+          className="group flex flex-col focus:outline-none shrink-0"
+          aria-label="Mambeg Country Guest House Home"
         >
-          <span className="font-editorial text-xl sm:text-2xl text-white tracking-[0.24em] sm:tracking-[0.28em] font-normal transition-opacity duration-300 group-hover:opacity-80">
-            {veloraResort.brandName}
+          <span
+            className={`font-editorial text-[26px] sm:text-[28px] tracking-tight font-semibold leading-none transition-colors duration-300 ${
+              isScrolled ? 'text-[#1e3325]' : 'text-[#fdfcf9]'
+            }`}
+          >
+            MAMBEG
           </span>
-          <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-[#dfcaa3]/50" />
-          <span className="hidden sm:inline-block text-[9px] uppercase tracking-[0.25em] text-[#dfcaa3]/75 font-sans font-medium">
-            MALDIVES
+          <span
+            className={`text-[9.5px] uppercase tracking-[0.26em] font-sans font-medium mt-0.5 transition-colors duration-300 ${
+              isScrolled ? 'text-[#5c7562]' : 'text-[#9cb1a1]'
+            }`}
+          >
+            Country Guest House
           </span>
         </a>
 
-        {/* Desktop Navigation Links: Visible only on wide desktop (>= 1536px) to keep 1280-1535px spacious */}
-        <nav className="hidden 2xl:flex items-center gap-8 2xl:gap-9" aria-label="Primary Navigation">
+        {/* Desktop Navigation Links */}
+        <nav className="hidden lg:flex items-center gap-8 xl:gap-10" aria-label="Primary Navigation">
           {navLinks.map((link) => (
             <a
               key={link.label}
@@ -75,57 +92,65 @@ export function Navbar({ onOpenBooking, onOpenConcierge, onOpenMegaMenu }: Navba
                 e.preventDefault();
                 handleNavClick(link.href);
               }}
-              className="text-[10.5px] uppercase tracking-[0.26em] font-sans text-white/70 hover:text-[#dfcaa3] transition-colors duration-300 relative py-1 group font-medium"
+              className={`text-[14px] tracking-wide font-sans transition-colors duration-200 relative py-1 group font-medium ${
+                isScrolled
+                  ? 'text-[#282d2a]/80 hover:text-[#1e3325]'
+                  : 'text-[#ded8cb] hover:text-[#faf8f4]'
+              }`}
             >
               {link.label}
-              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#dfcaa3] transition-[width] duration-300 group-hover:w-full" />
+              <span
+                className={`absolute bottom-0 left-0 w-0 h-[1.5px] transition-[width] duration-300 group-hover:w-full ${
+                  isScrolled ? 'bg-[#1e3325]' : 'bg-[#9cb1a1]'
+                }`}
+              />
             </a>
           ))}
         </nav>
 
         {/* Right Action Cluster */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          {/* Ambient Soundscape Control: Displayed at 2xl where ample horizontal space exists */}
-          <div className="hidden 2xl:flex">
-            <AmbienceControl />
-          </div>
+        <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
+          {/* Stay Assistant Quick Action */}
+          <button
+            onClick={() => onOpenStayAssistant()}
+            data-cursor="ASSISTANT"
+            aria-label="Ask Mambeg Stay Assistant"
+            className={`hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-[13px] font-sans font-medium transition-all duration-200 ${
+              isScrolled
+                ? 'border border-[#3d5642]/25 hover:border-[#1e3325] bg-[#3d5642]/5 hover:bg-[#3d5642]/10 text-[#1e3325]'
+                : 'border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/15 text-[#faf8f4] backdrop-blur-xs'
+            }`}
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-[#9cb1a1]" />
+            <span>Stay Assistant</span>
+          </button>
 
-          {/* Mega Menu Launcher Button */}
+          {/* Direct Stay Enquiry Action */}
+          <button
+            onClick={onOpenBooking}
+            data-cursor="ENQUIRE"
+            aria-label="Enquire about a stay at Mambeg"
+            className={`px-5 py-2.5 rounded-full text-[13.5px] font-sans font-semibold transition-all duration-200 shadow-xs active:scale-[0.98] ${
+              isScrolled
+                ? 'bg-[#1e3325] hover:bg-[#2a4734] text-[#faf8f4]'
+                : 'bg-[#faf8f4] hover:bg-[#eae3d5] text-[#1e3325]'
+            }`}
+          >
+            Enquire About a Stay
+          </button>
+
+          {/* Menu Trigger */}
           <button
             onClick={onOpenMegaMenu}
             data-cursor="MENU"
-            data-focus-id="navbar-menu-btn"
-            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-full border border-white/20 hover:border-[#dfcaa3] bg-white/[0.04] hover:bg-[#dfcaa3]/10 text-white/85 hover:text-white text-[9.5px] sm:text-[10px] uppercase tracking-[0.18em] sm:tracking-[0.22em] font-sans font-medium transition-colors duration-300"
-            aria-label="Open Resort Architecture Menu"
-            aria-haspopup="dialog"
+            className={`p-2 rounded-full transition-colors ${
+              isScrolled
+                ? 'text-[#191c1a] hover:bg-[#ded8cb]/50'
+                : 'text-[#faf8f4] hover:bg-white/10'
+            }`}
+            aria-label="Open Navigation Menu"
           >
-            <Menu className="w-3.5 h-3.5 text-[#dfcaa3]" />
-            <span>MENU</span>
-          </button>
-
-          {/* Desktop Concierge Access */}
-          <button
-            onClick={() => onOpenConcierge()}
-            data-cursor="CONCIERGE"
-            data-focus-id="navbar-concierge-btn"
-            aria-label="Consult Private Concierge"
-            aria-haspopup="dialog"
-            className="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#c4a97d]/35 hover:border-[#dfcaa3] bg-[#c4a97d]/10 hover:bg-[#c4a97d]/20 text-[#dfcaa3] text-[10px] uppercase tracking-[0.22em] font-sans font-medium transition-colors duration-300"
-          >
-            <Sparkles className="w-3 h-3 text-[#dfcaa3]" />
-            <span>CONCIERGE ✦</span>
-          </button>
-
-          {/* Direct Reservation Action */}
-          <button
-            onClick={onOpenBooking}
-            data-cursor="REQUEST"
-            data-focus-id="navbar-booking-btn"
-            aria-label="Request Your Stay at Velora"
-            aria-haspopup="dialog"
-            className="px-3 sm:px-5 py-1.5 rounded-full bg-[#dfcaa3] hover:bg-[#f0e2c8] text-[#04080f] text-[9px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.22em] font-sans font-medium transition-colors duration-300 whitespace-nowrap shadow-[0_0_20px_rgba(223,202,163,0.2)] hover:scale-[1.02] active:scale-[0.98]"
-          >
-            REQUEST YOUR STAY
+            <Menu className="w-5 h-5" />
           </button>
         </div>
       </div>

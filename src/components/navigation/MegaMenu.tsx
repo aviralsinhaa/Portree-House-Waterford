@@ -1,21 +1,19 @@
-import { useState, useEffect, useRef } from 'react';
-import { RESORT_MEDIA } from '../../data/mediaAssets';
-import { X, ArrowRight, Sparkles } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { mambegConfig } from '../../data/resortConfig';
+import { X, ArrowRight, Phone, Mail, MapPin } from 'lucide-react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
-import { ResponsiveImage } from '../ui/ResponsiveImage';
+import gsap from 'gsap';
 
 interface MegaMenuProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigateSection: (sectionId: string) => void;
-  onOpenVillaDetail: (villaId: string) => void;
-  onOpenCompareVillas: () => void;
-  onOpenDining: () => void;
-  onOpenWellness: () => void;
-  onOpenExperiences: () => void;
-  onOpenGettingHere: () => void;
+  onOpenRoomDetail: (roomId: string) => void;
+  onOpenCompareRooms: () => void;
+  onOpenBreakfast: () => void;
+  onOpenExplore: () => void;
   onOpenPracticalInfo: () => void;
-  onOpenConcierge: () => void;
+  onOpenStayAssistant: () => void;
   onOpenBooking: () => void;
 }
 
@@ -23,19 +21,17 @@ export function MegaMenu({
   isOpen,
   onClose,
   onNavigateSection,
-  onOpenVillaDetail,
-  onOpenCompareVillas,
-  onOpenDining,
-  onOpenWellness,
-  onOpenExperiences,
-  onOpenGettingHere,
+  onOpenRoomDetail,
+  onOpenCompareRooms,
+  onOpenBreakfast,
+  onOpenExplore,
   onOpenPracticalInfo,
-  onOpenConcierge,
+  onOpenStayAssistant,
   onOpenBooking,
 }: MegaMenuProps) {
-  const [activeCategory, setActiveCategory] = useState<'villas' | 'dining' | 'wellness' | 'experiences' | 'island' | 'transit'>('villas');
   const lastActiveElementRef = useRef<HTMLElement | null>(null);
   const menuContainerRef = useRef<HTMLDivElement>(null);
+  const menuItemsRef = useRef<HTMLDivElement>(null);
 
   useFocusTrap(menuContainerRef, isOpen, { autoFocusFirst: true });
 
@@ -44,6 +40,16 @@ export function MegaMenu({
     lastActiveElementRef.current = document.activeElement as HTMLElement | null;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+
+    // GSAP Stagger Entrance for Menu
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!mediaQuery.matches && menuItemsRef.current) {
+      gsap.fromTo(
+        menuItemsRef.current.children,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power3.out', delay: 0.1 }
+      );
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -61,355 +67,210 @@ export function MegaMenu({
 
   if (!isOpen) return null;
 
-  const categoryPreviews = {
-    villas: {
-      image: RESORT_MEDIA.villas.sunsetPoolVilla.hero,
-      tag: 'RESIDENTIAL ARCHITECTURE',
-      title: 'Villas & Pavilions',
-      desc: '24 secluded sanctuaries over water and sand.',
-    },
-    dining: {
-      image: RESORT_MEDIA.dining.aura.hero,
-      tag: 'CULINARY SANCTUARIES',
-      title: 'Dining at Velora',
-      desc: 'AURA, EMBER, TIDE, and private sandbank dining.',
-    },
-    wellness: {
-      image: RESORT_MEDIA.wellness.waterPavilion,
-      tag: 'RESTORATION OVER WATER',
-      title: 'The Water Pavilion',
-      desc: 'Tibetan Sound & Water Meditation and open-air movement.',
-    },
-    experiences: {
-      image: RESORT_MEDIA.experiences.mantaReefDive,
-      tag: 'ATOLL EXPEDITIONS',
-      title: 'Reef & Ocean Journeys',
-      desc: 'Reef channel dives, sunset catamaran sailing, and deserted sandbanks.',
-    },
-    island: {
-      image: RESORT_MEDIA.arrival.aerialAtoll,
-      tag: 'NOONU ATOLL · MALDIVES',
-      title: 'The Island World',
-      desc: 'Eight square kilometres of calm turquoise atoll lagoon.',
-    },
-    transit: {
-      image: RESORT_MEDIA.arrival.seaplaneLagoon,
-      tag: '45 MIN SCENIC SEAPLANE',
-      title: 'Getting Here',
-      desc: 'From Malé international airport directly to our outer lagoon pontoon.',
-    },
-  };
-
   return (
     <div
       ref={menuContainerRef}
       role="dialog"
       aria-modal="true"
-      aria-label="Resort Navigation Menu"
-      className="fixed inset-0 z-50 bg-[#04080f]/95 backdrop-blur-2xl text-[#ece6dc] flex flex-col justify-between overflow-y-auto animate-fade-in"
+      aria-label="Navigation Menu"
+      className="fixed inset-0 z-50 bg-[#faf8f4]/98 backdrop-blur-xl text-[#191c1a] flex flex-col justify-between overflow-y-auto animate-fade-in"
     >
       {/* Top Header */}
-      <div className="w-full px-6 sm:px-12 py-6 border-b border-white/10 flex items-center justify-between">
-        <span className="font-editorial text-2xl tracking-[0.2em] text-white">
-          VELORA
-        </span>
+      <div className="w-full px-6 sm:px-10 py-5 border-b border-[#191c1a]/10 flex items-center justify-between">
+        <div>
+          <span className="font-editorial text-2xl font-semibold text-[#1e3325]">
+            MAMBEG
+          </span>
+          <span className="block text-xs uppercase tracking-[0.2em] text-[#5c7562] font-medium">
+            Country Guest House
+          </span>
+        </div>
 
         <button
           onClick={onClose}
           data-cursor="CLOSE"
-          className="inline-flex items-center gap-2 p-2 rounded-full border border-white/20 hover:border-white text-white/80 hover:text-white transition-colors"
-          aria-label="Close navigation menu"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-[#191c1a]/15 hover:bg-[#ded8cb]/40 text-[#191c1a] text-xs font-medium transition-colors cursor-pointer"
+          aria-label="Close Navigation Menu"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
+          <span>Close</span>
         </button>
       </div>
 
-      {/* Main Navigation Columns */}
-      <div className="editorial-container flex-1 py-10 sm:py-16">
-        <div className="editorial-grid-12 gap-8 lg:gap-16 items-start">
-          {/* Left Column: Menu Items */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            <nav className="space-y-4">
-              {/* 01 The Island */}
-              <div
-                onMouseEnter={() => setActiveCategory('island')}
-                className="group border-b border-white/10 pb-3"
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    onNavigateSection('island');
-                    onClose();
-                  }}
-                  onFocus={() => setActiveCategory('island')}
-                  className="w-full flex items-baseline justify-between cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-[#dfcaa3] rounded-xs"
-                >
-                  <span className="font-editorial text-2xl sm:text-4xl text-white group-hover:text-[#dfcaa3] transition-colors">
-                    The Island
-                  </span>
-                  <span className="text-[10px] uppercase tracking-widest text-[#dfcaa3] font-mono">01</span>
-                </button>
-              </div>
+      {/* Main Body */}
+      <div className="w-full max-w-[1280px] mx-auto px-6 sm:px-10 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Navigation Columns */}
+        <div className="lg:col-span-7 space-y-6">
+          <p className="text-xs uppercase tracking-widest text-[#5c7562] font-semibold">
+            EXPLORE THE PROPERTY
+          </p>
 
-              {/* 02 Villas with Sub-links */}
-              <div
-                onMouseEnter={() => setActiveCategory('villas')}
-                className="space-y-2 border-b border-white/10 pb-3 group"
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    onNavigateSection('stay');
-                    onClose();
-                  }}
-                  onFocus={() => setActiveCategory('villas')}
-                  className="w-full flex items-baseline justify-between cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-[#dfcaa3] rounded-xs"
-                >
-                  <span className="font-editorial text-2xl sm:text-4xl text-white group-hover:text-[#dfcaa3] transition-colors">
-                    Villas & Pavilions
-                  </span>
-                  <span className="text-[10px] uppercase tracking-widest text-[#dfcaa3] font-mono">02</span>
-                </button>
-                <div className="flex flex-wrap gap-x-4 gap-y-1.5 pt-1 text-xs font-sans text-white/60">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onOpenVillaDetail('sunset-pool-villa');
-                      onClose();
-                    }}
-                    className="hover:text-white transition-colors"
-                  >
-                    Sunset Pool Villa
-                  </button>
-                  <span className="text-white/20">·</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onOpenVillaDetail('ocean-lagoon-villa');
-                      onClose();
-                    }}
-                    className="hover:text-white transition-colors"
-                  >
-                    Ocean Lagoon Villa
-                  </button>
-                  <span className="text-white/20">·</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onOpenVillaDetail('beach-reserve-residence');
-                      onClose();
-                    }}
-                    className="hover:text-white transition-colors"
-                  >
-                    Beach Reserve
-                  </button>
-                  <span className="text-white/20">·</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onOpenVillaDetail('velora-private-estate');
-                      onClose();
-                    }}
-                    className="hover:text-white transition-colors"
-                  >
-                    Private Estate
-                  </button>
-                  <span className="text-white/20">·</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onOpenCompareVillas();
-                      onClose();
-                    }}
-                    className="text-[#dfcaa3] hover:underline"
-                  >
-                    Compare Villas →
-                  </button>
-                </div>
-              </div>
+          <div ref={menuItemsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+              onClick={() => {
+                onClose();
+                onNavigateSection('stay');
+              }}
+              className="text-left p-4 rounded-xl border border-[#191c1a]/8 hover:border-[#1e3325] hover:bg-[#f5f2eb] transition-all group cursor-pointer"
+            >
+              <span className="font-editorial text-xl text-[#1e3325] block group-hover:translate-x-1 transition-transform">
+                Guest Rooms & Suites
+              </span>
+              <span className="text-xs text-[#626c65] mt-1 block">
+                Double, twin, and family accommodations with en-suite bathrooms.
+              </span>
+            </button>
 
-              {/* 03 Dining */}
-              <div
-                onMouseEnter={() => setActiveCategory('dining')}
-                className="group border-b border-white/10 pb-3"
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    onOpenDining();
-                    onClose();
-                  }}
-                  onFocus={() => setActiveCategory('dining')}
-                  className="w-full flex items-baseline justify-between cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-[#dfcaa3] rounded-xs"
-                >
-                  <span className="font-editorial text-2xl sm:text-4xl text-white group-hover:text-[#dfcaa3] transition-colors">
-                    Dining
-                  </span>
-                  <span className="text-[10px] uppercase tracking-widest text-[#dfcaa3] font-mono">03</span>
-                </button>
-                <div className="flex gap-4 pt-1 text-xs font-sans text-white/60">
-                  <span>AURA (Japanese)</span>
-                  <span className="text-white/20">·</span>
-                  <span>EMBER (Woodfire)</span>
-                  <span className="text-white/20">·</span>
-                  <span>Private Sandbank Dining</span>
-                </div>
-              </div>
+            <button
+              onClick={() => {
+                onClose();
+                onNavigateSection('the-house');
+              }}
+              className="text-left p-4 rounded-xl border border-[#191c1a]/8 hover:border-[#1e3325] hover:bg-[#f5f2eb] transition-all group cursor-pointer"
+            >
+              <span className="font-editorial text-xl text-[#1e3325] block group-hover:translate-x-1 transition-transform">
+                The House & Grounds
+              </span>
+              <span className="text-xs text-[#626c65] mt-1 block">
+                Countryside setting, residents lounge, gardens, and CCTV parking.
+              </span>
+            </button>
 
-              {/* 04 Experiences */}
-              <div
-                onMouseEnter={() => setActiveCategory('experiences')}
-                className="group border-b border-white/10 pb-3"
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    onOpenExperiences();
-                    onClose();
-                  }}
-                  onFocus={() => setActiveCategory('experiences')}
-                  className="w-full flex items-baseline justify-between cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-[#dfcaa3] rounded-xs"
-                >
-                  <span className="font-editorial text-2xl sm:text-4xl text-white group-hover:text-[#dfcaa3] transition-colors">
-                    Experiences
-                  </span>
-                  <span className="text-[10px] uppercase tracking-widest text-[#dfcaa3] font-mono">04</span>
-                </button>
-                <div className="flex gap-4 pt-1 text-xs font-sans text-white/60">
-                  <span>Reef Dive</span>
-                  <span className="text-white/20">·</span>
-                  <span>Sunset Sail</span>
-                  <span className="text-white/20">·</span>
-                  <span>Sandbank Luncheon</span>
-                </div>
-              </div>
+            <button
+              onClick={() => {
+                onClose();
+                onOpenBreakfast();
+              }}
+              className="text-left p-4 rounded-xl border border-[#191c1a]/8 hover:border-[#1e3325] hover:bg-[#f5f2eb] transition-all group cursor-pointer"
+            >
+              <span className="font-editorial text-xl text-[#1e3325] block group-hover:translate-x-1 transition-transform">
+                Breakfast & Dining
+              </span>
+              <span className="text-xs text-[#626c65] mt-1 block">
+                Full Scottish Breakfast, tea & coffee, and microwave amenities.
+              </span>
+            </button>
 
-              {/* 05 Wellness */}
-              <div
-                onMouseEnter={() => setActiveCategory('wellness')}
-                className="group border-b border-white/10 pb-3"
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    onOpenWellness();
-                    onClose();
-                  }}
-                  onFocus={() => setActiveCategory('wellness')}
-                  className="w-full flex items-baseline justify-between cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-[#dfcaa3] rounded-xs"
-                >
-                  <span className="font-editorial text-2xl sm:text-4xl text-white group-hover:text-[#dfcaa3] transition-colors">
-                    Wellness & The Water Pavilion
-                  </span>
-                  <span className="text-[10px] uppercase tracking-widest text-[#dfcaa3] font-mono">05</span>
-                </button>
-              </div>
+            <button
+              onClick={() => {
+                onClose();
+                onOpenExplore();
+              }}
+              className="text-left p-4 rounded-xl border border-[#191c1a]/8 hover:border-[#1e3325] hover:bg-[#f5f2eb] transition-all group cursor-pointer"
+            >
+              <span className="font-editorial text-xl text-[#1e3325] block group-hover:translate-x-1 transition-transform">
+                Explore the Local Area
+              </span>
+              <span className="text-xs text-[#626c65] mt-1 block">
+                Gare Loch, Garelochhead station, Helensburgh & The Hill House.
+              </span>
+            </button>
 
-              {/* 06 Discover Photography */}
-              <div
-                onMouseEnter={() => setActiveCategory('island')}
-                className="group border-b border-white/10 pb-3"
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    onNavigateSection('discover');
-                    onClose();
-                  }}
-                  onFocus={() => setActiveCategory('island')}
-                  className="w-full flex items-baseline justify-between cursor-pointer text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-[#dfcaa3] rounded-xs"
-                >
-                  <span className="font-editorial text-2xl sm:text-4xl text-white group-hover:text-[#dfcaa3] transition-colors">
-                    Photography & Stories
-                  </span>
-                  <span className="text-[10px] uppercase tracking-widest text-[#dfcaa3] font-mono">06</span>
-                </button>
-              </div>
+            <button
+              onClick={() => {
+                onClose();
+                onNavigateSection('gallery');
+              }}
+              className="text-left p-4 rounded-xl border border-[#191c1a]/8 hover:border-[#1e3325] hover:bg-[#f5f2eb] transition-all group cursor-pointer"
+            >
+              <span className="font-editorial text-xl text-[#1e3325] block group-hover:translate-x-1 transition-transform">
+                Photo Gallery
+              </span>
+              <span className="text-xs text-[#626c65] mt-1 block">
+                Authentic photographs of the guest house, rooms, and surroundings.
+              </span>
+            </button>
 
-              {/* 07 Getting Here & Practical Info */}
-              <div
-                onMouseEnter={() => setActiveCategory('transit')}
-                className="flex flex-wrap gap-6 pt-2 text-xs font-sans uppercase tracking-[0.2em]"
-              >
-                <button
-                  onClick={() => {
-                    onOpenGettingHere();
-                    onClose();
-                  }}
-                  className="text-white/80 hover:text-[#dfcaa3] transition-colors"
-                >
-                  Getting Here →
-                </button>
-                <span className="text-white/20">·</span>
-                <button
-                  onClick={() => {
-                    onOpenPracticalInfo();
-                    onClose();
-                  }}
-                  className="text-white/80 hover:text-[#dfcaa3] transition-colors"
-                >
-                  Practical Info & FAQ →
-                </button>
-              </div>
-            </nav>
+            <button
+              onClick={() => {
+                onClose();
+                onOpenPracticalInfo();
+              }}
+              className="text-left p-4 rounded-xl border border-[#191c1a]/8 hover:border-[#1e3325] hover:bg-[#f5f2eb] transition-all group cursor-pointer"
+            >
+              <span className="font-editorial text-xl text-[#1e3325] block group-hover:translate-x-1 transition-transform">
+                Practical Info & FAQs
+              </span>
+              <span className="text-xs text-[#626c65] mt-1 block">
+                Check-in times, parking, Wi-Fi, dog policy, and directions.
+              </span>
+            </button>
+          </div>
 
-            {/* Direct Major Actions */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6">
-              <button
-                onClick={() => {
-                  onClose();
-                  onOpenConcierge();
-                }}
-                className="px-6 py-3.5 rounded-full border border-[#c4a97d]/50 text-[#dfcaa3] hover:bg-[#dfcaa3]/10 text-xs uppercase tracking-[0.22em] font-sans flex items-center justify-center gap-2 transition-[border-color,background-color,color] duration-300"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Open Private Concierge ✦</span>
-              </button>
+          <div className="pt-2 flex flex-wrap gap-3">
+            <button
+              onClick={() => {
+                onClose();
+                onOpenCompareRooms();
+              }}
+              className="text-xs font-medium text-[#1e3325] hover:underline inline-flex items-center gap-1 cursor-pointer"
+            >
+              Compare All 4 Rooms <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+            <span className="text-[#c8bfad]">·</span>
+            <button
+              onClick={() => {
+                onClose();
+                onOpenStayAssistant();
+              }}
+              className="text-xs font-medium text-[#1e3325] hover:underline inline-flex items-center gap-1 cursor-pointer"
+            >
+              Ask Mambeg Stay Assistant <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
 
-              <button
-                onClick={() => {
-                  onClose();
-                  onOpenBooking();
-                }}
-                className="px-8 py-3.5 rounded-full bg-[#dfcaa3] hover:bg-[#f0e2c8] text-[#04080f] text-xs uppercase tracking-[0.22em] font-sans font-medium transition-[background-color,color,box-shadow] duration-300 shadow-md text-center"
-              >
-                Request Your Stay
-              </button>
+        {/* Property Information Card */}
+        <div className="lg:col-span-5 bg-[#f5f2eb] p-6 sm:p-7 rounded-2xl border border-[#191c1a]/8 space-y-5">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-[#5c7562] font-semibold">
+              DIRECT PROPERTY ENQUIRIES
+            </p>
+            <h3 className="font-editorial text-2xl text-[#1e3325] mt-1 font-semibold">
+              Plan Your Stay
+            </h3>
+            <p className="text-xs text-[#626c65] mt-2 leading-relaxed">
+              We welcome enquiries directly for current seasonal rates and availability across our double, twin, and family accommodations.
+            </p>
+          </div>
+
+          <div className="space-y-2.5 text-xs text-[#282d2a]">
+            <div className="flex items-start gap-2.5">
+              <MapPin className="w-4 h-4 text-[#3d5642] shrink-0 mt-0.5" />
+              <span>{mambegConfig.address}</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <Phone className="w-4 h-4 text-[#3d5642] shrink-0" />
+              <a href={`tel:${mambegConfig.phone.replace(/\s+/g, '')}`} className="hover:underline font-medium">
+                {mambegConfig.phone}
+              </a>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <Mail className="w-4 h-4 text-[#3d5642] shrink-0" />
+              <a href={`mailto:${mambegConfig.email}`} className="hover:underline font-medium">
+                {mambegConfig.email}
+              </a>
             </div>
           </div>
 
-          {/* Right Column: Dynamic Architectural Preview Image */}
-          <div className="lg:col-span-5 hidden lg:block">
-            <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#06101c] aspect-[4/3] shadow-2xl space-y-3 p-3">
-              <div className="w-full h-[75%] rounded-xl overflow-hidden">
-                <ResponsiveImage
-                  src={categoryPreviews[activeCategory].image}
-                  alt={categoryPreviews[activeCategory].title}
-                  sizes="(max-width: 1024px) 0px, 450px"
-                  className="w-full h-full object-cover velora-image-grade transition-[transform,opacity] duration-700"
-                  loading="lazy"
-                />
-              </div>
-              <div className="text-left px-2 pt-1">
-                <span className="text-[9px] uppercase tracking-[0.26em] text-[#dfcaa3] font-sans block">
-                  {categoryPreviews[activeCategory].tag}
-                </span>
-                <h4 className="font-editorial text-xl text-white">
-                  {categoryPreviews[activeCategory].title}
-                </h4>
-                <p className="font-sans text-xs text-white/60 font-light mt-0.5">
-                  {categoryPreviews[activeCategory].desc}
-                </p>
-              </div>
-            </div>
+          <div className="pt-2">
+            <button
+              onClick={() => {
+                onClose();
+                onOpenBooking();
+              }}
+              className="w-full py-3 px-4 rounded-lg bg-[#1e3325] hover:bg-[#2a4734] text-[#faf8f4] text-xs font-semibold transition-colors text-center shadow-xs cursor-pointer"
+            >
+              Send Stay Enquiry
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Bottom Quiet Footer Note */}
-      <div className="w-full px-6 sm:px-12 py-4 border-t border-white/10 text-xs font-mono text-white/40 flex justify-between">
-        <span>NOONU ATOLL · MALDIVES</span>
-        <span>VELORA PRIVATE ISLAND</span>
+      {/* Footer */}
+      <div className="w-full px-6 sm:px-10 py-4 border-t border-[#191c1a]/10 text-xs text-[#626c65] flex flex-col sm:flex-row items-center justify-between gap-2">
+        <span>Concept website preview · Not the official Mambeg Country Guest House website.</span>
+        <span>Check-in: 2:00 PM · Check-out: 10:00 AM</span>
       </div>
     </div>
   );

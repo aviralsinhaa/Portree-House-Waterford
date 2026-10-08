@@ -1,26 +1,22 @@
-import { useState, useEffect, useRef } from 'react';
-import { veloraResort } from '../../data/resortConfig';
-import { RESORT_MEDIA } from '../../data/mediaAssets';
-import { ConciergeSourceContext } from '../../data/resortContext';
-import { ArrowLeft, Clock, Sparkles, X, Compass, Users } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { mambegConfig } from '../../data/resortConfig';
+import { ArrowLeft, Check, MapPin, X } from 'lucide-react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { ResponsiveImage } from '../ui/ResponsiveImage';
 
 interface ExperiencesDestinationViewProps {
   onClose: () => void;
-  onAskConcierge: (prompt: string, context?: ConciergeSourceContext) => void;
-  onRequestStay: (notes?: string) => void;
+  selectedAttractionId?: string;
+  onOpenBooking: () => void;
 }
 
 export function ExperiencesDestinationView({
   onClose,
-  onAskConcierge,
-  onRequestStay,
+  selectedAttractionId,
+  onOpenBooking,
 }: ExperiencesDestinationViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useFocusTrap(containerRef, true, { autoFocusFirst: true });
-
-  const [activeCategory, setActiveCategory] = useState<'all' | 'ocean' | 'private' | 'culinary'>('all');
 
   useEffect(() => {
     const prevOverflow = document.body.style.overflow;
@@ -37,205 +33,128 @@ export function ExperiencesDestinationView({
     };
   }, [onClose]);
 
-  const experiencePresentation: Record<string, { suits: string; includes: string }> = {
-    'house-reef-dive': {
-      suits: 'Certified divers with relevant certification for outer drop-off dives. Lagoon orientation available on the house reef.',
-      includes: 'Scuba equipment, reef safety orientation, and boat-based access within the experience concept.',
-    },
-    'sunset-dhoni-cruise': {
-      suits: 'Couples, families, and photography enthusiasts.',
-      includes: 'Chilled champagne, artisan canapés, and scenic cruising.',
-    },
-    'sandbank-picnic': {
-      suits: 'Couples seeking complete Robinson Crusoe luxury or private celebratory lunches.',
-      includes: 'Boat-based transit within the experience concept, curated picnic setup, shaded linen canopy, chilled beverages.',
-    },
-    'private-yacht-charter': {
-      suits: 'Small groups or couples wanting total open-ocean freedom across Noonu Atoll.',
-      includes: 'Bespoke charter itinerary, gourmet lunch, island excursion stops, snorkeling & diving gear.',
-    },
-    'starlight-cinema': {
-      suits: 'Couples and families looking for a magical evening under open constellations.',
-      includes: 'Curated film selection, champagne, artisan popcorn and dessert tasting.',
-    },
-  };
-
-  const experiences = veloraResort.experiences;
-
-  const filtered =
-    activeCategory === 'all'
-      ? experiences
-      : experiences.filter((e) => e.category === activeCategory);
+  const attraction = mambegConfig.attractions.find((a) => a.id === selectedAttractionId) || mambegConfig.attractions[0];
 
   return (
     <div
       ref={containerRef}
       role="dialog"
       aria-modal="true"
-      aria-label="Experiences at Velora"
-      className="fixed inset-0 z-50 overflow-y-auto bg-[#04080f] text-[#ece6dc] animate-fade-in"
+      aria-label="Explore Argyll & Gare Loch"
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#faf8f4] text-[#191c1a] animate-fade-in"
     >
-      {/* Fixed Header */}
-      <header className="sticky top-0 z-40 w-full bg-[#04080f]/90 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3 sm:gap-6">
+      <header className="sticky top-0 z-40 w-full bg-[#faf8f4]/95 backdrop-blur-md border-b border-[#191c1a]/10 px-4 sm:px-8 py-3.5 flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <button
             onClick={onClose}
-            data-cursor="BACK"
-            data-focus-id="experiences-back"
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-[#dfcaa3] hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#1e3325] hover:underline"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Back to Island</span>
+            <span>Back to Property</span>
           </button>
-          <span className="text-white/20">/</span>
-          <span className="font-editorial text-lg sm:text-xl text-white tracking-wide">
-            Island Experiences
+          <span className="text-[#ded8cb]">/</span>
+          <span className="font-editorial text-lg text-[#1e3325] font-semibold">
+            {attraction.title}
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() =>
-              onAskConcierge('What ocean and private sandbank experiences do you offer?', {
-                type: 'experience',
-                id: 'experience-general',
-              })
-            }
-            data-cursor="CONCIERGE"
-            data-focus-id="experiences-concierge"
-            className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#c4a97d]/40 text-[#dfcaa3] hover:bg-[#dfcaa3]/10 text-[11px] uppercase tracking-[0.2em] font-sans transition-colors"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Ask Concierge</span>
-          </button>
-
-          <button
-            onClick={() => onRequestStay('Interested in private ocean expeditions & sandbank dining')}
-            data-focus-id="experiences-request"
-            className="px-5 py-2 rounded-full bg-[#dfcaa3] hover:bg-[#f0e2c8] text-[#04080f] text-[11px] uppercase tracking-[0.2em] font-sans font-medium transition-colors"
-          >
-            REQUEST YOUR STAY
-          </button>
-
-          <button
-            onClick={onClose}
-            data-focus-id="experiences-close"
-            className="p-2 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
-            aria-label="Close experiences destination"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        <button
+          onClick={onClose}
+          className="p-1.5 rounded-md hover:bg-[#ded8cb]/40 text-[#191c1a] transition-colors"
+          aria-label="Close"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </header>
 
-      {/* Main Content */}
-      <div className="editorial-container py-8 sm:py-14 space-y-12 sm:space-y-16">
-        {/* Intro */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-white/10 pb-6 text-left">
-          <div className="space-y-2">
-            <span className="text-[10px] uppercase tracking-[0.32em] text-[#dfcaa3] font-sans font-medium block">
-              CURATED ISLAND EXPEDITIONS
-            </span>
-            <h1 className="font-editorial text-4xl sm:text-6xl text-white font-light">
-              Moments Beyond the Shore
-            </h1>
-            <p className="font-sans text-xs sm:text-sm text-white/70 max-w-xl font-light">
-              From sunset catamaran sailing and outer reef channel diving to deserted sandbank luncheons across Noonu Atoll.
+      <main className="max-w-4xl mx-auto px-4 sm:px-8 py-8 sm:py-12 space-y-8">
+        <div>
+          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#5c7562] font-semibold mb-1">
+            <MapPin className="w-3.5 h-3.5 text-[#3d5642]" />
+            <span>{attraction.distance} · {attraction.category}</span>
+          </div>
+          <h1 className="font-editorial text-3xl sm:text-4xl text-[#1e3325] font-semibold">
+            {attraction.title}
+          </h1>
+        </div>
+
+        <div className="aspect-[16/10] rounded-xl overflow-hidden bg-[#ded8cb] relative shadow-sm border border-[#191c1a]/8">
+          <ResponsiveImage
+            src={attraction.image}
+            alt={attraction.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          <div className="md:col-span-8 space-y-4">
+            <h2 className="font-editorial text-2xl text-[#1e3325] font-semibold">
+              About this location
+            </h2>
+            <p className="text-sm text-[#3c443f] leading-relaxed">
+              {attraction.description}
             </p>
+
+            <div className="space-y-2 pt-2">
+              <h3 className="text-xs uppercase tracking-wider text-[#5c7562] font-semibold">
+                LOCAL HIGHLIGHTS
+              </h3>
+              <ul className="space-y-1.5 text-xs text-[#282d2a]">
+                {attraction.highlights.map((h) => (
+                  <li key={h} className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-[#3d5642] shrink-0" />
+                    <span>{h}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
-            {(['all', 'ocean', 'private', 'culinary'] as const).map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-1.5 rounded-full text-xs uppercase tracking-[0.18em] font-sans transition-colors ${
-                  activeCategory === cat
-                    ? 'bg-[#dfcaa3] text-[#04080f] font-medium'
-                    : 'border border-white/10 text-white/60 hover:text-white'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Experiences Grid */}
-        <div className="space-y-16">
-          {filtered.map((exp, idx) => (
-            <article
-              key={exp.id}
-              className={`editorial-grid-12 gap-8 lg:gap-14 items-center ${
-                idx % 2 === 1 ? 'lg:flex-row-reverse' : ''
-              }`}
+          <div className="md:col-span-4 bg-[#f5f2eb] p-6 rounded-xl border border-[#191c1a]/8 space-y-4">
+            <h3 className="font-editorial text-xl text-[#1e3325] font-semibold">
+              Stay at Mambeg
+            </h3>
+            <p className="text-xs text-[#626c65] leading-relaxed">
+              Experience the tranquility of the Scottish countryside and explore the surrounding area from our welcoming guest house.
+            </p>
+            <button
+              onClick={() => {
+                onClose();
+                onOpenBooking();
+              }}
+              className="w-full py-2.5 px-4 rounded-md bg-[#1e3325] hover:bg-[#2a4734] text-[#faf8f4] text-xs font-medium text-center transition-colors shadow-xs"
             >
-              {/* Media Column (7 Cols) */}
-              <div className={`lg:col-span-7 ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
-                <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#06101c] aspect-[16/10] shadow-2xl group">
-                  <ResponsiveImage
-                    src={exp.image}
-                    alt={exp.title}
-                    priority={idx === 0}
-                    loading={idx === 0 ? 'eager' : 'lazy'}
-                    sizes="(max-width: 1024px) 100vw, 60vw"
-                    className="w-full h-full object-cover velora-image-grade group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-              </div>
-
-              {/* Details Column (5 Cols) */}
-              <div className={`lg:col-span-5 space-y-6 text-left ${idx % 2 === 1 ? 'lg:order-1' : ''}`}>
-                <div className="space-y-2">
-                  <span className="text-[10px] uppercase tracking-[0.26em] text-[#dfcaa3] font-sans font-medium block">
-                    {exp.category.toUpperCase()} · {exp.privacy.toUpperCase()}
-                  </span>
-                  <h2 className="font-editorial text-2xl sm:text-3xl lg:text-4xl text-white font-light">
-                    {exp.title}
-                  </h2>
-                </div>
-
-                <p className="font-sans text-xs sm:text-sm text-white/75 leading-relaxed font-light">
-                  {exp.description}
-                </p>
-
-                {/* Practical Details */}
-                <div className="py-4 border-y border-white/10 space-y-2 text-xs font-sans">
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Clock className="w-3.5 h-3.5 text-[#dfcaa3]" />
-                    <span>Duration: {exp.duration} ({exp.timing})</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Users className="w-3.5 h-3.5 text-[#dfcaa3]" />
-                    <span>Privacy: {exp.privacy}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5 text-xs font-sans text-white/60 font-light">
-                  <p><strong className="text-white/80 font-normal">Who it suits:</strong> {experiencePresentation[exp.id]?.suits}</p>
-                  <p><strong className="text-white/80 font-normal">Includes:</strong> {experiencePresentation[exp.id]?.includes}</p>
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    onClick={() =>
-                      onAskConcierge(`Tell me more about ${exp.title}. Would this work for beginners?`, {
-                        type: 'experience',
-                        id: exp.id,
-                      })
-                    }
-                    data-focus-id={`experiences-concierge-${exp.id}`}
-                    className="editorial-link text-xs uppercase tracking-[0.2em]"
-                  >
-                    <span>Include in Itinerary with Concierge ✦</span>
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
+              Enquire About a Stay
+            </button>
+          </div>
         </div>
-      </div>
+
+        <div className="border-t border-[#191c1a]/10 pt-8">
+          <h3 className="font-editorial text-xl text-[#1e3325] font-semibold mb-4">
+            Other Nearby Highlights
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {mambegConfig.attractions
+              .filter((a) => a.id !== attraction.id)
+              .map((other) => (
+                <div
+                  key={other.id}
+                  className="bg-[#f5f2eb] p-4 rounded-lg border border-[#191c1a]/8"
+                >
+                  <span className="text-[10px] text-[#5c7562] uppercase tracking-wider block">
+                    {other.distance}
+                  </span>
+                  <h4 className="font-editorial text-base text-[#1e3325] font-semibold mt-1">
+                    {other.title}
+                  </h4>
+                  <p className="text-xs text-[#626c65] line-clamp-2 mt-1">
+                    {other.description}
+                  </p>
+                </div>
+              ))}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

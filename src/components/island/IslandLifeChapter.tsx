@@ -1,136 +1,77 @@
 import { useRef } from 'react';
-import { RESORT_MEDIA } from '../../data/mediaAssets';
+import { mambegConfig } from '../../data/resortConfig';
+import { MAMBEG_MEDIA } from '../../data/mediaAssets';
 import { ArrowRight } from 'lucide-react';
 import { useScrollMotion } from '../../hooks/useScrollMotion';
 import { ResponsiveImage } from '../ui/ResponsiveImage';
 import gsap from 'gsap';
 
 interface IslandLifeChapterProps {
-  onOpenDining: () => void;
-  onOpenExperiences: () => void;
-  onOpenWellness: () => void;
+  onOpenBreakfast: () => void;
+  onOpenExplore: () => void;
 }
 
-export function IslandLifeChapter({
-  onOpenDining,
-  onOpenExperiences,
-  onOpenWellness,
-}: IslandLifeChapterProps) {
+export function IslandLifeChapter({ onOpenBreakfast, onOpenExplore }: IslandLifeChapterProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const chapterDotRef = useRef<HTMLSpanElement>(null);
-  const chapterTextRef = useRef<HTMLSpanElement>(null);
-  const chapterLineRef = useRef<HTMLDivElement>(null);
-
-  const diningCardRef = useRef<HTMLDivElement>(null);
-  const diningImgRef = useRef<HTMLImageElement>(null);
-  const diningTitleRef = useRef<HTMLSpanElement>(null);
-  const diningLabelRef = useRef<HTMLSpanElement>(null);
-  const diningDescRef = useRef<HTMLParagraphElement>(null);
-  const diningLinkRef = useRef<HTMLSpanElement>(null);
-
-  const expCardRef = useRef<HTMLDivElement>(null);
-  const expImgRef = useRef<HTMLImageElement>(null);
-  const expTitleRef = useRef<HTMLSpanElement>(null);
-  const expLabelRef = useRef<HTMLSpanElement>(null);
-  const expDescRef = useRef<HTMLParagraphElement>(null);
-  const expLinkRef = useRef<HTMLSpanElement>(null);
-
-  const wellnessCardRef = useRef<HTMLDivElement>(null);
-  const wellnessImgRef = useRef<HTMLImageElement>(null);
-  const wellnessTitleRef = useRef<HTMLSpanElement>(null);
-  const wellnessLabelRef = useRef<HTMLSpanElement>(null);
-  const wellnessDescRef = useRef<HTMLParagraphElement>(null);
-  const wellnessLinkRef = useRef<HTMLSpanElement>(null);
+  const headlineLineRef = useRef<HTMLSpanElement>(null);
+  const wideBannerFrameRef = useRef<HTMLDivElement>(null);
+  const wideBannerImgRef = useRef<HTMLDivElement>(null);
+  const editorialSequenceRef = useRef<HTMLDivElement>(null);
 
   useScrollMotion(sectionRef, (_ctx, isReducedMotion) => {
     if (isReducedMotion || !sectionRef.current) return;
 
-    // GROUP A: Header, Dining Card, Experiences Card (Triggered at Section Entry)
-    const tlA = gsap.timeline({
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: 'top 82%',
+        start: 'top 75%',
         toggleActions: 'play none none none',
       },
     });
 
-    // Chapter Header signature
-    if (chapterDotRef.current) {
-      tlA.fromTo(chapterDotRef.current, { scale: 0 }, { scale: 1, duration: 0.45, ease: 'power3.out' }, 0);
-    }
-    if (chapterTextRef.current) {
-      tlA.fromTo(chapterTextRef.current, { opacity: 0, x: -6 }, { opacity: 1, x: 0, duration: 0.5, ease: 'power3.out' }, 0.04);
-    }
-    if (chapterLineRef.current) {
-      tlA.fromTo(chapterLineRef.current, { scaleX: 0 }, { scaleX: 1, transformOrigin: 'left', duration: 0.65, ease: 'power3.out' }, 0.06);
+    if (headlineLineRef.current) {
+      tl.fromTo(
+        headlineLineRef.current,
+        { yPercent: 115 },
+        { yPercent: 0, duration: 0.85, ease: 'power3.out' },
+        0
+      );
     }
 
-    // 1. DINING CARD: Image leads (~80ms progression)
-    if (diningCardRef.current) {
-      tlA.fromTo(diningCardRef.current, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 0.12);
-    }
-    if (diningImgRef.current) {
-      tlA.fromTo(diningImgRef.current, { scale: 1.035 }, { scale: 1.0, duration: 0.85, ease: 'power3.out' }, 0.12);
-    }
-    if (diningLabelRef.current) {
-      tlA.fromTo(diningLabelRef.current, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.18);
-    }
-    if (diningTitleRef.current) {
-      tlA.fromTo(diningTitleRef.current, { yPercent: 105 }, { yPercent: 0, duration: 0.75, ease: 'power3.out' }, 0.24);
-    }
-    if (diningDescRef.current) {
-      tlA.fromTo(diningDescRef.current, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 0.30);
-    }
-    if (diningLinkRef.current) {
-      tlA.fromTo(diningLinkRef.current, { opacity: 0, x: -4 }, { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 0.36);
+    if (wideBannerFrameRef.current) {
+      tl.fromTo(
+        wideBannerFrameRef.current,
+        { clipPath: 'inset(8% 0% 8% 0%)', opacity: 0.6 },
+        { clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, duration: 1.1, ease: 'power3.inOut' },
+        0.15
+      );
     }
 
-    // 2. EXPERIENCES CARD: Headline leads (~80ms progression)
-    if (expTitleRef.current) {
-      tlA.fromTo(expTitleRef.current, { yPercent: 105 }, { yPercent: 0, duration: 0.75, ease: 'power3.out' }, 0.26);
-    }
-    if (expLabelRef.current) {
-      tlA.fromTo(expLabelRef.current, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.30);
-    }
-    if (expCardRef.current) {
-      tlA.fromTo(expCardRef.current, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 0.34);
-    }
-    if (expImgRef.current) {
-      tlA.fromTo(expImgRef.current, { scale: 1.035 }, { scale: 1.0, duration: 0.85, ease: 'power3.out' }, 0.34);
-    }
-    if (expDescRef.current) {
-      tlA.fromTo(expDescRef.current, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 0.40);
-    }
-    if (expLinkRef.current) {
-      tlA.fromTo(expLinkRef.current, { opacity: 0, x: -4 }, { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 0.46);
+    if (editorialSequenceRef.current) {
+      tl.fromTo(
+        editorialSequenceRef.current.children,
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out' },
+        0.35
+      );
     }
 
-    // GROUP B: WELLNESS CARD (Task 7: triggers when user actually reaches it)
-    if (wellnessCardRef.current) {
-      const tlB = gsap.timeline({
-        scrollTrigger: {
-          trigger: wellnessCardRef.current,
-          start: 'top 85%',
-          toggleActions: 'play none none none',
-        },
-      });
-
-      tlB.fromTo(wellnessCardRef.current, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 0);
-      if (wellnessImgRef.current) {
-        tlB.fromTo(wellnessImgRef.current, { scale: 1.035 }, { scale: 1.0, duration: 0.85, ease: 'power3.out' }, 0);
-      }
-      if (wellnessLabelRef.current) {
-        tlB.fromTo(wellnessLabelRef.current, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.05);
-      }
-      if (wellnessTitleRef.current) {
-        tlB.fromTo(wellnessTitleRef.current, { yPercent: 105 }, { yPercent: 0, duration: 0.75, ease: 'power3.out' }, 0.1);
-      }
-      if (wellnessDescRef.current) {
-        tlB.fromTo(wellnessDescRef.current, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 0.16);
-      }
-      if (wellnessLinkRef.current) {
-        tlB.fromTo(wellnessLinkRef.current, { opacity: 0, x: -4 }, { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 0.24);
-      }
+    // Gentle parallax scrub on the banner image
+    if (wideBannerImgRef.current) {
+      gsap.fromTo(
+        wideBannerImgRef.current,
+        { yPercent: -5 },
+        {
+          yPercent: 5,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: wideBannerFrameRef.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          },
+        }
+      );
     }
   });
 
@@ -138,181 +79,152 @@ export function IslandLifeChapter({
     <section
       id="island-life"
       ref={sectionRef}
-      className="relative w-full py-20 sm:py-28 lg:py-40 bg-[#04080f] text-[#ece6dc] overflow-hidden border-t border-white/10"
+      className="relative w-full py-24 sm:py-32 md:py-40 bg-[#faf8f4] text-[#191c1a]"
+      aria-label="Gardens and Grounds"
     >
       <div className="editorial-container">
-        {/* Chapter Header */}
-        <div className="border-b border-white/10 pb-5 mb-12 sm:mb-16">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span ref={chapterDotRef} className="w-1.5 h-1.5 rounded-full bg-[#dfcaa3]" />
-                <span ref={chapterTextRef} className="text-[10px] uppercase tracking-[0.32em] text-[#dfcaa3] font-sans font-medium block">
-                  CHAPTER 04 · ISLAND LIFE
-                </span>
-              </div>
-              <h2 className="font-editorial text-3xl sm:text-4xl lg:text-5xl text-white font-light tracking-wide">
-                Ecosystems of Ocean & Living
-              </h2>
-            </div>
-            <p className="text-left sm:text-right font-sans text-xs text-white/50 max-w-xs font-light mt-2 sm:mt-0">
-              Three living dimensions shaped entirely around the rhythm of water, fire, and quiet restoration.
-            </p>
+        {/* Section Heading with Line Mask */}
+        <div className="max-w-3xl mb-14 sm:mb-20">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="w-2 h-2 rounded-full bg-[#3d5642]" />
+            <span className="text-[12px] uppercase tracking-[0.24em] font-sans text-[#3d5642] font-semibold">
+              CHAPTER III · NATURE & PACE
+            </span>
+            <div className="h-px bg-[#3d5642]/20 w-24 hidden sm:block" />
           </div>
-          <div ref={chapterLineRef} className="w-full h-[1px] bg-white/10 mt-5 origin-left" />
-        </div>
 
-        {/* Spread 1: 7 Cols Dining | 5 Cols Ocean & Reef (Asymmetric) */}
-        <div className="editorial-grid-12 gap-8 lg:gap-12 items-center mb-12 lg:mb-16">
-          {/* 7 Cols: Dining Gateway */}
-          <div
-            ref={diningCardRef}
-            role="button"
-            tabIndex={0}
-            onClick={onOpenDining}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onOpenDining();
-              }
-            }}
-            aria-label="Explore Dining Above the Reef"
-            data-cursor="DINING"
-            className="lg:col-span-7 group cursor-pointer space-y-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfcaa3] rounded-xl"
-          >
-            <div className="relative rounded-xl overflow-hidden border border-white/10 bg-[#06101c] aspect-[16/10] shadow-xl">
-              <ResponsiveImage
-                ref={diningImgRef}
-                src={RESORT_MEDIA.dining.aura.hero}
-                alt="Dining over the lagoon"
-                sizes="(max-width: 1024px) 100vw, 60vw"
-                className="w-full h-full object-cover velora-image-grade group-hover:scale-[1.018] transition-transform duration-700 ease-out"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-              <div className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 right-6">
-                <span ref={diningLabelRef} className="text-[10px] uppercase tracking-[0.28em] text-[#dfcaa3] font-sans font-medium block mb-1">
-                  01 · CULINARY SANCTUARIES
-                </span>
-                <h3 className="font-editorial text-2xl sm:text-4xl text-white font-light group-hover:text-[#dfcaa3] transition-colors">
-                  <span className="block overflow-hidden">
-                    <span ref={diningTitleRef} className="block">
-                      Dining Above the Reef
-                    </span>
-                  </span>
-                </h3>
-                <p ref={diningDescRef} className="font-sans text-xs sm:text-sm text-white/70 max-w-md mt-1 font-light hidden sm:block">
-                  Contemporary coastal Japanese at AURA, beachfront woodfire grills at EMBER, and lantern-lit private sandbank dining.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-xs px-1">
-              <span className="font-sans text-white/60 text-[11px] uppercase tracking-wider">AURA · EMBER · TIDE · SANDBANK</span>
-              <span ref={diningLinkRef} className="editorial-link">
-                <span>Explore Dining</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#dfcaa3]" />
+          <h2 className="font-display-chapter text-[#1e3325] font-normal leading-[1.02]">
+            <div className="overflow-hidden">
+              <span ref={headlineLineRef} className="inline-block will-change-transform">
+                Surrounded by coastal green.
               </span>
             </div>
-          </div>
-
-          {/* 5 Cols: Ocean / Experiences Gateway */}
-          <div
-            ref={expCardRef}
-            role="button"
-            tabIndex={0}
-            onClick={onOpenExperiences}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onOpenExperiences();
-              }
-            }}
-            aria-label="Explore House Reef & Expeditions"
-            data-cursor="OCEAN"
-            className="lg:col-span-5 group cursor-pointer space-y-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfcaa3] rounded-xl"
-          >
-            <div className="relative rounded-xl overflow-hidden border border-white/10 bg-[#06101c] aspect-[4/5] sm:aspect-[4/5] shadow-xl">
-              <ResponsiveImage
-                ref={expImgRef}
-                src={RESORT_MEDIA.experiences.mantaReefDive}
-                alt="Diving the house reef"
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                className="w-full h-full object-cover velora-image-grade group-hover:scale-[1.018] transition-transform duration-700 ease-out"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-              <div className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 right-6">
-                <span ref={expLabelRef} className="text-[10px] uppercase tracking-[0.28em] text-[#dfcaa3] font-sans font-medium block mb-1">
-                  02 · OCEAN & REEF
-                </span>
-                <h3 className="font-editorial text-2xl sm:text-3xl text-white font-light group-hover:text-[#dfcaa3] transition-colors">
-                  <span className="block overflow-hidden">
-                    <span ref={expTitleRef} className="block">
-                      House Reef & Expeditions
-                    </span>
-                  </span>
-                </h3>
-                <p ref={expDescRef} className="font-sans text-xs text-white/70 mt-1 font-light hidden sm:block">
-                  Outer-reef drift exploration, sunset catamaran sails, and deserted atoll picnics.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-xs px-1">
-              <span className="font-sans text-white/60 text-[11px] uppercase tracking-wider">SNORKELING · SAILING · EXPEDITIONS</span>
-              <span ref={expLinkRef} className="editorial-link">
-                <span>Explore Experiences</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#dfcaa3]" />
-              </span>
-            </div>
-          </div>
+          </h2>
+          <p className="font-sans text-[16px] sm:text-[17px] text-[#585145] mt-4 leading-[1.68]">
+            Framed by woodland along Rosneath Road, Mambeg creates a peaceful natural buffer from busy travel routes. Enjoy fresh coastal loch air, birdsong, and open garden space with views across the water.
+          </p>
         </div>
 
-        {/* Spread 2: Full-Width / 12-Column Quieter Wellness Gateway */}
+        {/* Immersive Wide Grounds Image with Clip-Path Entrance & Parallax */}
         <div
-          ref={wellnessCardRef}
-          role="button"
-          tabIndex={0}
-          onClick={onOpenWellness}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onOpenWellness();
-            }
-          }}
-          aria-label="Discover Wellness & Rituals at The Water Pavilion"
-          data-cursor="WELLNESS"
-          className="group cursor-pointer space-y-4 text-left border-t border-white/10 pt-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfcaa3] rounded-xl"
+          ref={wideBannerFrameRef}
+          className="relative aspect-[21/9] sm:aspect-[16/7] rounded-2xl overflow-hidden bg-[#ded8cb] mb-20 sm:mb-28 shadow-lg will-change-[clip-path]"
         >
-          <div className="relative rounded-xl overflow-hidden border border-white/10 bg-[#06101c] aspect-[16/9] sm:aspect-[21/9] shadow-xl">
+          <div ref={wideBannerImgRef} className="absolute inset-0 w-full h-[112%] -top-[6%] will-change-transform">
             <ResponsiveImage
-              ref={wellnessImgRef}
-              src={RESORT_MEDIA.wellness.waterPavilion}
-              alt="The Water Pavilion at Velora"
-              sizes="(max-width: 1024px) 100vw, 90vw"
-              className="w-full h-full object-cover velora-image-grade group-hover:scale-[1.018] transition-transform duration-700 ease-out"
-              loading="lazy"
+              src={MAMBEG_MEDIA.property.outlook}
+              alt="Scenic outlook over Gare Loch and Argyll landscape from Mambeg Country Guest House"
+              className="w-full h-full object-cover select-none"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-            <div className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-              <div>
-                <span ref={wellnessLabelRef} className="text-[10px] uppercase tracking-[0.28em] text-[#dfcaa3] font-sans font-medium block mb-1">
-                  03 · THE WATER PAVILION
-                </span>
-                <h3 className="font-editorial text-2xl sm:text-4xl text-white font-light group-hover:text-[#dfcaa3] transition-colors">
-                  <span className="block overflow-hidden">
-                    <span ref={wellnessTitleRef} className="block">
-                      Restoration Over the Lagoon
-                    </span>
-                  </span>
-                </h3>
-                <p ref={wellnessDescRef} className="font-sans text-xs sm:text-sm text-white/70 max-w-lg mt-1 font-light">
-                  Restorative sound sessions, open-air yoga on the movement deck, and Ayurvedic warm oil therapies suspended above water.
-                </p>
-              </div>
-              <span ref={wellnessLinkRef} className="editorial-link self-start sm:self-auto">
-                <span>Discover Wellness & Rituals</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#dfcaa3]" />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#16261b]/92 via-[#16261b]/30 to-transparent flex items-end p-6 sm:p-12">
+            <div className="max-w-2xl text-[#fdfcf9]">
+              <span className="text-[11px] uppercase tracking-[0.22em] text-[#9cb1a1] font-semibold block mb-2 font-sans">
+                Rosneath Peninsula
               </span>
+              <p className="font-editorial text-2xl sm:text-4xl font-light text-[#faf8f4] leading-snug">
+                Tranquil countryside setting overlooking the waters of Gare Loch.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Editorial Sequence: Why Mambeg (No Identical Cards) */}
+        <div className="mb-10 sm:mb-14">
+          <span className="text-[12px] uppercase tracking-[0.24em] font-sans text-[#3d5642] font-semibold block mb-2">
+            THE STAY PHILOSOPHY
+          </span>
+          <h3 className="font-editorial text-3xl sm:text-4xl text-[#1e3325] font-semibold leading-tight">
+            Why guests choose Mambeg Country Guest House
+          </h3>
+        </div>
+
+        <div ref={editorialSequenceRef} className="space-y-16 sm:space-y-24">
+          {/* 01: A quieter setting */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center border-t border-[#191c1a]/12 pt-12">
+            <div className="lg:col-span-2">
+              <span className="font-editorial text-4xl sm:text-5xl text-[#3d5642] font-light">01</span>
+            </div>
+            <div className="lg:col-span-4">
+              <h4 className="font-editorial text-2xl sm:text-3xl text-[#1e3325] font-semibold leading-snug">
+                A quieter coastal setting
+              </h4>
+              <span className="text-[12px] uppercase tracking-wider text-[#5c7562] font-semibold font-sans mt-1 block">
+                Countryside Stillness
+              </span>
+            </div>
+            <div className="lg:col-span-6 space-y-3">
+              <p className="text-[15.5px] text-[#3c443f] leading-[1.68] font-sans">
+                Set peacefully on the Rosneath Peninsula away from busy trunk roads, Mambeg offers unhurried night stillness, clear lochside skies, and birdsong each morning.
+              </p>
+            </div>
+          </div>
+
+          {/* 02: A personal stay & common areas */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center border-t border-[#191c1a]/12 pt-12">
+            <div className="lg:col-span-2">
+              <span className="font-editorial text-4xl sm:text-5xl text-[#3d5642] font-light">02</span>
+            </div>
+            <div className="lg:col-span-4">
+              <h4 className="font-editorial text-2xl sm:text-3xl text-[#1e3325] font-semibold leading-snug">
+                Dedicated residents lounge
+              </h4>
+              <span className="text-[12px] uppercase tracking-wider text-[#5c7562] font-semibold font-sans mt-1 block">
+                Light Evening Dining & Relaxation
+              </span>
+            </div>
+            <div className="lg:col-span-6 space-y-4">
+              <p className="text-[15.5px] text-[#3c443f] leading-[1.68] font-sans">
+                Beyond your bedroom, enjoy full access to the guest lounge with dining tables, chairs, microwave, tableware, books, board games, and an extensive DVD library.
+              </p>
+              <button onClick={onOpenBreakfast} className="btn-editorial cursor-pointer">
+                <span>View Lounge & Dining</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* 03: Cooked Scottish Breakfast */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center border-t border-[#191c1a]/12 pt-12">
+            <div className="lg:col-span-2">
+              <span className="font-editorial text-4xl sm:text-5xl text-[#3d5642] font-light">03</span>
+            </div>
+            <div className="lg:col-span-4">
+              <h4 className="font-editorial text-2xl sm:text-3xl text-[#1e3325] font-semibold leading-snug">
+                Freshly cooked breakfast
+              </h4>
+              <span className="text-[12px] uppercase tracking-wider text-[#5c7562] font-semibold font-sans mt-1 block">
+                Made to Order Every Morning
+              </span>
+            </div>
+            <div className="lg:col-span-6 space-y-4">
+              <p className="text-[15.5px] text-[#3c443f] leading-[1.68] font-sans">
+                A hearty Full Scottish Breakfast prepared fresh to order, complemented by porridge, cereals, toast, fruit, fresh juices, and pots of coffee and Scottish tea.
+              </p>
+            </div>
+          </div>
+
+          {/* 04: Base for exploring Argyll & West Highland Line */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center border-t border-[#191c1a]/12 pt-12">
+            <div className="lg:col-span-2">
+              <span className="font-editorial text-4xl sm:text-5xl text-[#3d5642] font-light">04</span>
+            </div>
+            <div className="lg:col-span-4">
+              <h4 className="font-editorial text-2xl sm:text-3xl text-[#1e3325] font-semibold leading-snug">
+                Argyll & West Highland base
+              </h4>
+              <span className="text-[12px] uppercase tracking-wider text-[#5c7562] font-semibold font-sans mt-1 block">
+                1.2 Miles to Railway Station
+              </span>
+            </div>
+            <div className="lg:col-span-6 space-y-4">
+              <p className="text-[15.5px] text-[#3c443f] leading-[1.68] font-sans">
+                Conveniently located 1.2 miles from Garelochhead station on the West Highland Line and 15 minutes from Helensburgh and Loch Lomond, offering seamless road and rail connections.
+              </p>
+              <button onClick={onOpenExplore} className="btn-editorial cursor-pointer">
+                <span>Discover Local Sights</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </div>
